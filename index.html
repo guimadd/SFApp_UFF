@@ -13,6 +13,7 @@
             <div class="input-group">
                 <input type="text" name="input" id="input" placeholder="Digite o texto aqui...">
                 <button type="button" onclick="shannon_fano(document.getElementById('input').value)">Comprimir</button>
+                <button type="button" onclick="resetFields()">Reset</button>
             </div>
 
             <section id="freq_table_container" class="result-container">
@@ -36,6 +37,8 @@
                 <h2>Árvore de Codificação</h2>
                 <div id="graph_draw"></div>
             </section>
+            <button id="prev_step_btn">Etapa Anterior</button>
+            <button id="next_step_btn">Próxima Etapa</button>
         </section>
     </main>
 
