@@ -1,3 +1,14 @@
+// Função para limpar todos os campos
+function resetFields() {
+    document.getElementById('input').value = '';
+    document.getElementById('freq_table').innerHTML = '';
+    document.getElementById('codes_table').innerHTML = '';
+    document.getElementById('bit_code').innerHTML = '';
+    document.getElementById('graph_draw').innerHTML = '';
+    document.getElementById('prev_step_btn').style.display = 'none';
+    document.getElementById('next_step_btn').style.display = 'none';
+}
+
 //Estrutura Nó
 function Node(data, bit, left, right){ 
     this.data   = data;
@@ -220,6 +231,8 @@ function compress(data, codes_ary){
     return bit_code;
 }
 
+
+
 //Shannon Fano
 function shannon_fano(data){
     var freq = sf_pp(data);
@@ -239,4 +252,9 @@ function shannon_fano(data){
     //Comprime a String inicial em 0 e 1
     var bitCode = compress(data, codes);
     document.getElementById('bit_code').innerHTML = "Resultado: " + bitCode;
+    // Mostra os botões "Etapa Anterior" e "Próxima Etapa"
+    var prevStepBtn = document.getElementById('prev_step_btn');
+    prevStepBtn.style.display = 'inline-block'; // Mostra o botão
+    var nextStepBtn = document.getElementById('next_step_btn');
+    nextStepBtn.style.display = 'inline-block'; // Mostra o botão
 }
