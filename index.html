@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shannon-Fano Encoding</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="container">
+        <section id="left-section" class="section">
+            <h1>Shannon-Fano Encoding</h1>
+            <div class="input-group">
+                <input type="text" name="input" id="input" placeholder="Digite o texto aqui...">
+                <button type="button" onclick="shannon_fano(document.getElementById('input').value)">Comprimir</button>
+            </div>
+
+            <section id="freq_table_container" class="result-container">
+                <h2>Tabela de Frequências</h2>
+                <div id="freq_table"></div>
+            </section>
+
+            <section id="codes_table_container" class="result-container">
+                <h2>Tabela de Códigos</h2>
+                <div id="codes_table"></div>
+            </section>
+
+            <section id="bit_code_container" class="result-container">
+                <h2>Resultado</h2>
+                <p id="bit_code"></p>
+            </section>
+        </section>
+
+        <section id="right-section" class="section">
+            <section id="graph_draw_container" class="result-container">
+                <h2>Árvore de Codificação</h2>
+                <div id="graph_draw"></div>
+            </section>
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/1.1.0/sigma.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

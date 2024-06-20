@@ -1,0 +1,95 @@
+/* Estilos gerais */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    width: 90%;
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+}
+
+.section {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left; /* Alinha o conteúdo à esquerda */
+}
+
+.input-group input[type="text"] {
+    width: calc(100% - 100px); /* Ajusta a largura da caixa de texto */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-group button {
+    margin-top: 10px; /* Espaço entre o input e o botão */
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+
+.result-container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.result-container h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+#freq_table, #codes_table {
+    width: 100%; /* Garante que ocupem todo o espaço disponível */
+    border-collapse: collapse; /* Colapso das bordas das células */
+}
+
+#freq_table th, #freq_table td,
+#codes_table th, #codes_table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+#graph_draw {
+    height: 500px; /* Ajuste conforme necessário */
+    border: 1px solid #ccc;
+}
+
+table {
+    width: 50%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: #fff;
+}
