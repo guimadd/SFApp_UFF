@@ -37,8 +37,9 @@ body {
     border-radius: 4px;
 }
 
-.input-group button {
-    margin-top: 10px; /* Espaço entre o input e o botão */
+.input-group button, #prev_step_btn, #next_step_btn {
+    margin-top: 10px;
+    margin-right: 10px; /* Espaço entre os botões */
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -47,6 +48,11 @@ body {
     border: none;
     border-radius: 4px;
 }
+
+#next_step_btn, #prev_step_btn {
+    display: none; /* Mantém o botão escondido inicialmente */
+}
+
 
 .result-container {
     margin-top: 20px;
