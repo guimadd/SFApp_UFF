@@ -11,7 +11,7 @@ body {
 
 .container {
     width: 90%;
-    margin-top: 30px;
+    margin-top: 10px;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -75,12 +75,12 @@ body {
 #freq_table th, #freq_table td,
 #codes_table th, #codes_table td {
     border: 1px solid #ccc;
-    padding: 8px;
+    padding: 5px;
     text-align: center;
 }
 
 #graph_draw {
-    height: 500px; /* Ajuste conforme necessário */
+    height: 300px; /* Altura do gráfico */
     border: 1px solid #ccc;
 }
 
