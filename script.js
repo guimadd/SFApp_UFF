@@ -7,6 +7,7 @@ function resetFields() {
     document.getElementById('graph_draw').innerHTML = '';
     document.getElementById('prev_step_btn').style.display = 'none';
     document.getElementById('next_step_btn').style.display = 'none';
+    document.getElementById('compression_ratio').innerHTML = '';
 }
 
 //Estrutura Nó
@@ -22,7 +23,7 @@ function show() {
     return this.data; 
 } 
 
-//Estrutura BST
+//Estrutura BST - árvore binaria de busca
 function BST() { 
     this.root = null;
 }
@@ -129,10 +130,10 @@ function codesTable(tableData){
 }
 
 //Criar uma arvore em JSON
-function buildTreeJSON(node, graph, x=0, y=0, dx=0.2, dy=0.2){
+function buildTreeJSON(node, graph, x=0, y=0, dx=0.2, dy=0.2, path=""){
     graph.nodes.push({
-        id: node.show(),
-        label: node.show(),
+        id: node.show() + " (" + path + ")",
+        label: node.show() + " (" + path + ")",
         x: x,
         y: y,
         size: 3
@@ -140,21 +141,21 @@ function buildTreeJSON(node, graph, x=0, y=0, dx=0.2, dy=0.2){
     if(node.left != null) {
         var leftx = (x+(dx*-1))-5;
         var lefty = (y+dy)+5;
-        buildTreeJSON(node.left, graph, leftx, lefty, dx-1, dy-1);
+        buildTreeJSON(node.left, graph, leftx, lefty, dx-1, dy-1, path + "0");
         graph.edges.push({
             id: "el_"+node.show(),
-            source: node.show(),
-            target: node.left.show()
+            source: node.show() + " (" + path + ")",
+            target: node.left.show() + " (" + path + "0)"
         });
     }
     if(node.right != null) {
         var rightx = (x+dx)+5;
         var righty = (y+dy)+5;
-        buildTreeJSON(node.right, graph, rightx, righty, dx-1, dy-1);
+        buildTreeJSON(node.right, graph, rightx, righty, dx-1, dy-1, path + "1");
         graph.edges.push({
             id: "er_"+node.show(),
-            source: node.show(),
-            target: node.right.show()
+            source: node.show() + " (" + path + ")",
+            target: node.right.show() + " (" + path + "1)"
         });
     }
 }
@@ -226,7 +227,7 @@ function compress(data, codes_ary){
     var bit_code = "";
     var codes = arrayToObject(codes_ary);
     for(var i=0;i<data.length;i++){
-        bit_code += " "+codes[data[i]];
+        bit_code += ""+codes[data[i]];
     }
     return bit_code;
 }
@@ -252,9 +253,18 @@ function shannon_fano(data){
     //Comprime a String inicial em 0 e 1
     var bitCode = compress(data, codes);
     document.getElementById('bit_code').innerHTML = "Resultado: " + bitCode;
+    document.getElementById('compression_ratio').innerHTML += "Compressão: " + CompRatio(data, bitCode) + '<br>' + 'Percentual de compressão: ' + CompRatio2(data, bitCode) + '%';
     // Mostra os botões "Etapa Anterior" e "Próxima Etapa"
     var prevStepBtn = document.getElementById('prev_step_btn');
     prevStepBtn.style.display = 'inline-block'; // Mostra o botão
     var nextStepBtn = document.getElementById('next_step_btn');
     nextStepBtn.style.display = 'inline-block'; // Mostra o botão
+}
+function CompRatio(original, compressed){
+    aux = original.length*8; // 1 char = 8 bits
+    return (aux/compressed.length).toFixed(2);
+}
+function CompRatio2(original, compressed){
+    aux = original.length*8; // 1 char = 8 bits
+    return ((1-(compressed.length/aux))*100).toFixed(2);
 }
