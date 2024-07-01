@@ -5,9 +5,8 @@ function resetFields() {
     document.getElementById('codes_table').innerHTML = '';
     document.getElementById('bit_code').innerHTML = '';
     document.getElementById('graph_draw').innerHTML = '';
-    document.getElementById('prev_step_btn').style.display = 'none';
-    document.getElementById('next_step_btn').style.display = 'none';
     document.getElementById('compression_ratio').innerHTML = '';
+    document.getElementById('decodeStep_btn').style.display = 'none';
 }
 
 //Estrutura Nó
@@ -252,13 +251,11 @@ function shannon_fano(data){
     document.getElementById('codes_table').appendChild(codesTable(codes));
     //Comprime a String inicial em 0 e 1
     var bitCode = compress(data, codes);
-    document.getElementById('bit_code').innerHTML = "Resultado: " + bitCode;
+    document.getElementById('bit_code').innerHTML = "Código: " + bitCode;
     document.getElementById('compression_ratio').innerHTML += "Compressão: " + CompRatio(data, bitCode) + '<br>' + 'Percentual de compressão: ' + CompRatio2(data, bitCode) + '%';
-    // Mostra os botões "Etapa Anterior" e "Próxima Etapa"
-    var prevStepBtn = document.getElementById('prev_step_btn');
-    prevStepBtn.style.display = 'inline-block'; // Mostra o botão
-    var nextStepBtn = document.getElementById('next_step_btn');
-    nextStepBtn.style.display = 'inline-block'; // Mostra o botão
+    //Decodificação
+    initializeDecode(bitCode, codes);
+    document.getElementById('decodeStep_btn').style.display = 'block';
 }
 function CompRatio(original, compressed){
     aux = original.length*8; // 1 char = 8 bits
@@ -267,4 +264,40 @@ function CompRatio(original, compressed){
 function CompRatio2(original, compressed){
     aux = original.length*8; // 1 char = 8 bits
     return ((1-(compressed.length/aux))*100).toFixed(2);
+}
+
+let decodeState = {
+    bitCode: "",
+    codesObj: {},
+    tempCode: "",
+    currentIndex: 0,
+    decodedString: ""
+};
+
+function initializeDecode(bitCode, codes) {
+    // Inicializa o estado com os novos dados
+    decodeState.bitCode = bitCode;
+    decodeState.codesObj = codes.reduce((obj, codePair) => {
+        obj[codePair[1]] = codePair[0]; // Reverte chave/valor para decodificação
+        return obj;
+    }, {});
+    decodeState.tempCode = "";
+    decodeState.currentIndex = 0;
+    decodeState.decodedString = "";
+}
+
+function decodeStep() {
+    if (decodeState.currentIndex < decodeState.bitCode.length) {
+        decodeState.tempCode += decodeState.bitCode[decodeState.currentIndex]; // Adiciona o bit atual ao tempCode
+        if (decodeState.tempCode in decodeState.codesObj) { // Verifica se tempCode corresponde a algum código
+            decodeState.decodedString += decodeState.codesObj[decodeState.tempCode]; // Anexa o caractere correspondente a decodedString
+            decodeState.tempCode = ""; // Reseta tempCode para o próximo caractere
+        }
+        decodeState.currentIndex++;
+        document.getElementById('input').value = decodeState.decodedString; // Atualiza o campo de entrada com o decodedString
+    } else {
+        console.log("Decodificação completa.");
+    }
+    // Atualiza a interface do usuário aqui, se necessário
+    document.getElementById('bit_code').innerHTML = (`Código: ${decodeState.bitCode}<br>Decodificado: ${decodeState.decodedString}<br>Bits restantes: ${decodeState.bitCode.substring(decodeState.currentIndex)}`);
 }
