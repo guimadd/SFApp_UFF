@@ -37,7 +37,7 @@ body {
     border-radius: 4px;
 }
 
-.input-group button, #prev_step_btn, #next_step_btn {
+.input-group button {
     margin-top: 10px;
     margin-right: 10px; /* Espaço entre os botões */
     padding: 10px 20px;
@@ -49,7 +49,7 @@ body {
     border-radius: 4px;
 }
 
-#next_step_btn, #prev_step_btn {
+#decodeStep_btn {
     display: none; /* Mantém o botão escondido inicialmente */
 }
 
