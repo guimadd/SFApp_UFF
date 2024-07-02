@@ -11,7 +11,7 @@ Descrição das funções:
   
   insert(freq): Método para inserir novos nós na árvore, baseado em um array de frequências. Ele divide o array em duas partes e cria nós filhos esquerdo e direito com essas partes.
   
-  BST(): Define uma árvore binária de busca (Binary Search Tree - BST) com uma propriedade root que inicialmente é null.
+  BST(): Define uma árvore binária de busca (Binary Search Tree - BST) com uma propriedade root (nó raiz) que inicialmente é null.
   
   calcSlice(data): Calcula onde dividir o array de frequências para a construção da árvore, tentando manter as somas das frequências dos dois lados o mais equilibradas possível.
   
