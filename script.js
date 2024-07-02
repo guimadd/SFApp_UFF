@@ -257,7 +257,7 @@ function shannon_fano(data){
     document.getElementById('bit_code').innerHTML = "Código: " + bitCode;
     document.getElementById('compression_ratio').innerHTML += "Compressão: " + CompRatio(data, bitCode) + '<br>' + 'Percentual de compressão: ' + CompRatio2(data, bitCode) + '%';
     //Decodificação
-    initializeDecode(bitCode, codes);
+    initDecode(bitCode, codes);
     document.getElementById('decodeStep_btn').style.display = 'block';
     document.getElementById('encode_btn').style.display = 'none';
 }
@@ -278,7 +278,7 @@ let decodeState = {
     decodedString: ""
 };
 
-function initializeDecode(bitCode, codes) {
+function initDecode(bitCode, codes) {
     // Inicializa o estado com os novos dados
     decodeState.bitCode = bitCode;
     decodeState.codesObj = codes.reduce((obj, codePair) => {
