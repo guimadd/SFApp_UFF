@@ -3,30 +3,42 @@ Trabalho da Disciplina TCC00281 - FUNDAMENTOS DE SISTEMAS MULTIMÍDIA - A1 de cr
 
 Descrição das funções:
 
-  resetFields: Limpa todos os campos e tabelas na interface do usuário, preparando para uma nova execução do algoritmo.
+  resetFields(): Esta função limpa todos os campos e elementos HTML relacionados à exibição dos resultados da compressão e codificação. Ela também alterna a visibilidade dos botões de codificação e decodificação.
   
-  Node: Define a estrutura de um nó utilizado na árvore binária. Cada nó armazena dados, um bit (0 ou 1, usado na compressão), referências para os nós filho à esquerda e à direita, e métodos para exibir os dados e inserir novos nós.
+  Node(data, bit, left, right): Define um nó da árvore binária usada no algoritmo. Cada nó armazena dados, um bit (que pode ser 0 ou 1, mas é null para a raiz), referências para os nós filhos esquerdo e direito, e métodos para exibir os dados (show) e inserir novos nós (insert).
   
-  BST (Binary Search Tree): Estrutura básica para a árvore binária, inicialmente com a raiz nula.
+  show(): Método para retornar os dados armazenados em um nó.
   
-  getLeafsCodes: Percorre a árvore binária para obter os códigos de cada caractere (que são as folhas da árvore), concatenando "0" para movimento à esquerda e "1" para movimento à direita.
+  insert(freq): Método para inserir novos nós na árvore, baseado em um array de frequências. Ele divide o array em duas partes e cria nós filhos esquerdo e direito com essas partes.
   
-  createTree: Cria a árvore binária a partir de um array de frequências dos caracteres. Inicializa a árvore com um nó raiz contendo todos os caracteres.
+  BST(): Define uma árvore binária de busca (Binary Search Tree - BST) com uma propriedade root que inicialmente é null.
   
-  insert: Método para inserir elementos na árvore. Divide o array de frequências aproximadamente ao meio, baseado nas probabilidades, e cria nós filhos à esquerda e à direita com esses subconjuntos.
+  calcSlice(data): Calcula onde dividir o array de frequências para a construção da árvore, tentando manter as somas das frequências dos dois lados o mais equilibradas possível.
   
-  freqsTable e codesTable: Geram tabelas HTML para exibir as frequências dos caracteres e seus respectivos códigos de compressão.
+  codigosFolhas(node, array, codigo=""): Gera os códigos binários para cada caractere baseado na posição dos nós folha na árvore.
   
-  buildTreeJSON: Constrói uma representação em JSON da árvore binária para visualização. Cada nó é adicionado com coordenadas específicas para facilitar a visualização gráfica.
+  criaArvore(freq): Cria a árvore binária a partir de um array de frequências.
   
-  graphSF: Utiliza a biblioteca sigma para desenhar o grafo representando a árvore binária na interface do usuário.
+  freqsTable(tableData) e codesTable(tableData): Geram tabelas HTML para exibir as frequências dos caracteres e seus códigos binários correspondentes, respectivamente.
   
-  sf_pp (Shannon-Fano Pré-Processamento): Calcula as frequências de cada caractere na string de entrada e as ordena em ordem decrescente de frequência.
+  buildTreeJSON(node, graph, x=0, y=0, dx=0.2, dy=0.2, path=""): Constrói uma representação em JSON da árvore para visualização.
   
-  calcSlice: Determina o ponto de divisão do array de frequências para equilibrar as somas das frequências dos subconjuntos esquerdo e direito.
+  graphSF(g): Utiliza a biblioteca sigma para desenhar o grafo representando a árvore binária na interface do usuário.
   
-  arrayToObject: Converte um array de pares chave-valor em um objeto para facilitar o acesso aos códigos de compressão.
+  sf_pp(data): Pré-processa os dados de entrada, calculando a frequência de cada caractere.
   
-  compress: Gera a string comprimida, substituindo cada caractere pelo seu código de compressão correspondente.
+  arrayToObject(array): Converte um array de pares chave-valor em um objeto.
   
-  shannon_fano: Função principal que executa o algoritmo de Shannon-Fano. Calcula as frequências dos caracteres, cria a árvore binária, gera os códigos de compressão, e finalmente comprime a string de entrada. Também atualiza a interface do usuário com as tabelas de frequências, códigos, e a visualização gráfica da árvore, além de exibir os botões para navegação entre etapas do processo.
+  compress(data, codes_ary): Comprime a string de entrada em uma sequência de bits usando os códigos gerados.
+  
+  shannon_fano(data): Função principal que executa o algoritmo de Shannon-Fano. Calcula as frequências, cria a árvore, gera os códigos para cada caractere, comprime a string de entrada e atualiza a interface do usuário com os resultados.
+  
+  CompRatio(original, compressed) e CompRatio2(original, compressed): Calculam a taxa de compressão e a porcentagem de compressão, respectivamente.
+
+
+  
+  decodeState: Um objeto usado para manter o estado durante a decodificação.
+  
+  initDecode(bitCode, codes): Inicializa o estado de decodificação com o código comprimido e os códigos dos caracteres.
+  
+  decodeStep(): Realiza um passo da decodificação, decodificando um bit por vez e atualizando a interface do usuário com o progresso.
