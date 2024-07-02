@@ -55,7 +55,6 @@ A função calcSlice é responsável por determinar o ponto de divisão de um ar
   
   Retornar o índice de divisão: O índice encontrado é retornado pela função. Este índice é usado para dividir o array de frequências em dois subarrays: um à esquerda do ponto de divisão e outro à direita. Esses subarrays são então usados para construir os ramos esquerdo e direito da árvore binária, respectivamente.
   
-  
   total é a soma total de todas as frequências.
   soma é a soma parcial das frequências, começando do primeiro elemento.
   halfTotal é metade da soma total das frequências.
