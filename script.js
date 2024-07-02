@@ -7,18 +7,20 @@ function resetFields() {
     document.getElementById('graph_draw').innerHTML = '';
     document.getElementById('compression_ratio').innerHTML = '';
     document.getElementById('decodeStep_btn').style.display = 'none';
+    //document.getElementById('decodeStepRev_btn').style.display = 'none';
     document.getElementById('encode_btn').style.display = 'block';
 }
 
 //Estrutura Nó - árvore binaria de busca (BST)
-function Node(data, bit, left, right){ 
-    this.data   = data;
-    this.bit    = bit;
-    this.left   = left; 
-    this.right  = right; 
-    this.show   = show;
+function Node(data, bit, left, right, freqSum = 0){ 
+    this.data = data;
+    this.bit = bit;
+    this.left = left; 
+    this.right = right; 
+    this.freqSum = freqSum;
+    this.show = show;
     this.insert = insert;
-} 
+}
 //Permite acessar e exibir o dado contido em um nó específico da árvore.
 function show() { 
     return this.data; 
@@ -27,24 +29,33 @@ function show() {
 //Insere elementos na arvore, tendo em conta, que deve partir os arrays +- a meio confor-me as probabilidades (ver calcSlice())
 function insert(freq){
     var aux;
-    var slice = calcSlice(freq)+1;
+    var slice = calcSlice(freq) + 1;
     var node_name = "";
-    //Inserir à esquerda
+    var freqSum = 0; // Inicializa a soma das frequências
+
+    // Inserir à esquerda
     aux = freq.slice(0, slice);
-    for(var i=0;i<aux.length;i++){
+    for(var i = 0; i < aux.length; i++){
         node_name = node_name.concat(aux[i][0]);
+        freqSum += parseFloat(aux[i][1]); // Soma as frequências
     }
-    this.left = new Node(node_name, 0, null, null);
-    if(aux.length>1)
+    this.left = new Node(node_name, 0, null, null, freqSum); // Passa freqSum para o novo nó
+
+    if(aux.length > 1)
         this.left.insert(aux);
+
     var node_name = "";
-    //Inserir à direita
+    var freqSum = 0; // Reinicia a soma das frequências para o nó direito
+
+    // Inserir à direita
     aux = freq.slice(slice, freq.length);
-    for(var i=0;i<aux.length;i++){
+    for(var i = 0; i < aux.length; i++){
         node_name = node_name.concat(aux[i][0]);
+        freqSum += parseFloat(aux[i][1]); // Soma as frequências
     }
-    this.right = new Node(node_name, 1, null, null);
-    if(aux.length>1)
+    this.right = new Node(node_name, 1, null, null, freqSum.toFixed(3)); // Passa freqSum para o novo nó
+
+    if(aux.length > 1)
         this.right.insert(aux);
 }
 
@@ -89,7 +100,7 @@ function criaArvore(freq){
     for(var i=0;i<freq.length;i++){
         root_name = root_name.concat(freq[i][0]);
     }
-    var rootNode = new Node(root_name, null, null, null);
+    var rootNode = new Node(root_name, null, null, null, 1);
     tree.root = rootNode;
     tree.root.insert(freq);
     
@@ -147,30 +158,30 @@ function codesTable(tableData){
 }
 
 //Criar uma arvore em JSON
-function buildTreeJSON(node, graph, x=0, y=0, dx=0.2, dy=0.2, path=""){
+function buildTreeJSON(node, graph, x = 0, y = 0, dx = 0.2, dy = 0.2, path = ""){
     graph.nodes.push({
         id: node.show() + " (" + path + ")",
-        label: node.show() + " (" + path + ")",
+        label: node.show() + " (" + path + "), Freq: " + node.freqSum, // Inclui a frequência somada no rótulo
         x: x,
         y: y,
         size: 3
     });
     if(node.left != null) {
-        var leftx = (x+(dx*-1))-5;
-        var lefty = (y+dy)+5;
-        buildTreeJSON(node.left, graph, leftx, lefty, dx-1, dy-1, path + "0");
+        var leftx = (x + (dx * -1)) - 5;
+        var lefty = (y + dy) + 5;
+        buildTreeJSON(node.left, graph, leftx, lefty, dx - 1, dy - 1, path + "0");
         graph.edges.push({
-            id: "el_"+node.show(),
+            id: "el_" + node.show(),
             source: node.show() + " (" + path + ")",
             target: node.left.show() + " (" + path + "0)"
         });
     }
     if(node.right != null) {
-        var rightx = (x+dx)+5;
-        var righty = (y+dy)+5;
-        buildTreeJSON(node.right, graph, rightx, righty, dx-1, dy-1, path + "1");
+        var rightx = (x + dx) + 5;
+        var righty = (y + dy) + 5;
+        buildTreeJSON(node.right, graph, rightx, righty, dx - 1, dy - 1, path + "1");
         graph.edges.push({
-            id: "er_"+node.show(),
+            id: "er_" + node.show(),
             source: node.show() + " (" + path + ")",
             target: node.right.show() + " (" + path + "1)"
         });
@@ -195,6 +206,7 @@ function graphSF(g){
 function sf_pp(data){
     var freq = {};
     var alf = [];
+    //calculo da frequencia de cada caractere
     for (var i=0; i<data.length;i++) {
         var character = data.charAt(i);
         if (freq[character]) {
@@ -204,9 +216,11 @@ function sf_pp(data){
             alf.push(character);
         }
     }
+    //calculo da probabilidade de cada caractere
     for (var i=0; i<alf.length;i++) {
         freq[alf[i]] = (freq[alf[i]]/data.length).toFixed(3);
     }
+    //ordenação decrescente
     var sorted = [];
     for (var char in freq)
             sorted.push([char, freq[char]]);
@@ -255,7 +269,7 @@ function shannon_fano(data){
     //Comprime a String inicial em 0 e 1
     var bitCode = compress(data, codes);
     document.getElementById('bit_code').innerHTML = "Código: " + bitCode;
-    document.getElementById('compression_ratio').innerHTML += "Compressão: " + CompRatio(data, bitCode) + '<br>' + 'Percentual de compressão: ' + CompRatio2(data, bitCode) + '%';
+    document.getElementById('compression_ratio').innerHTML += "Compressão: " + CompRatio(data, bitCode) + '<br>' + 'Percentual de compressão: ' + CompRatio2(data, bitCode) + '%' + '<br>' + 'Quantidade de bits com SF ' + bitCode.length + '<br>' + 'Quantidade de bits sem SF:' + data.length*8;
     //Decodificação
     initDecode(bitCode, codes);
     document.getElementById('decodeStep_btn').style.display = 'block';
@@ -299,9 +313,26 @@ function decodeStep() {
         }
         decodeState.currentIndex++;
         document.getElementById('input').value = decodeState.decodedString; // Atualiza o campo de entrada com o decodedString
+        updateUI();// Atualiza a interface do usuário aqui
     } else {
-        console.log("Decodificação completa.");
+        console.log("Decodificação completa."); // Mensagem de log para indicar que a decodificação foi concluída - apenas pra testar rsrs
+        document.getElementById('bit_code').innerHTML = (`Código: ${decodeState.bitCode}<br>Decodificado: ${decodeState.decodedString}<br>Bits restantes: Acabou!`);
     }
-    // Atualiza a interface do usuário aqui, se necessário
+    // Atualiza a interface do usuário aqui
+}
+
+/*function decodeStepRev(){
+    if (decodeState.currentIndex > 0) {
+        decodeState.tempCode = decodeState.bitCode.substring(0, decodeState.currentIndex);
+        decodeState.decodedString = decodeState.decodedString.substring(0, decodeState.decodedString.length - 1);
+        decodeState.currentIndex--;
+        document.getElementById('input').value = decodeState.decodedString;
+    }
+    updateUI();
+
+}*/
+
+function updateUI() {
     document.getElementById('bit_code').innerHTML = (`Código: ${decodeState.bitCode}<br>Decodificado: ${decodeState.decodedString}<br>Bits restantes: ${decodeState.bitCode.substring(decodeState.currentIndex)}`);
+    //document.getElementById('decodeStepRev_btn').style.display = 'block';
 }
