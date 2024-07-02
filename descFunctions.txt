@@ -46,3 +46,18 @@ Função decodeStep
   Reseta tempCode para uma string vazia, preparando-a para acumular um novo código.
   Incrementa currentIndex para passar ao próximo bit na string codificada.
   Atualiza a interface do usuário (se necessário), mostrando a string decodificada até o momento e os bits restantes a serem processados. Isso é feito modificando o conteúdo de elementos HTML específicos, como o elemento com id bit_code, para refletir o progresso da decodificação.
+
+A função calcSlice é responsável por determinar o ponto de divisão de um array de frequências para a construção de uma árvore binária, seguindo o princípio do algoritmo de Shannon-Fano. O objetivo é dividir o array de modo que a soma das frequências de um lado seja o mais próxima possível da soma das frequências do outro lado. Aqui está o passo a passo de como a função calcSlice opera:
+
+  Calcular a soma total das frequências: A função itera sobre o array de dados data, que contém pares de caracteres e suas frequências, somando todas as frequências para obter o total.
+  
+  Encontrar o ponto de divisão: A função então busca o ponto onde a soma parcial das frequências, começando do início do array, é o mais próxima possível de metade da soma total das frequências. Isso é feito acumulando as frequências dos elementos um a um até que a soma parcial (incluindo o próximo elemento) ultrapasse a metade da soma total. O índice do elemento que causa essa condição é considerado o ponto de divisão.
+  
+  Retornar o índice de divisão: O índice encontrado é retornado pela função. Este índice é usado para dividir o array de frequências em dois subarrays: um à esquerda do ponto de divisão e outro à direita. Esses subarrays são então usados para construir os ramos esquerdo e direito da árvore binária, respectivamente.
+  
+  
+  total é a soma total de todas as frequências.
+  soma é a soma parcial das frequências, começando do primeiro elemento.
+  halfTotal é metade da soma total das frequências.
+  O loop for incrementa soma com a frequência do próximo elemento até que adicionar o próximo elemento faria soma exceder halfTotal.
+  O índice j-1 é retornado, indicando o ponto de divisão onde o array deve ser dividido para tentar equilibrar as somas das frequências de ambos os lados.
