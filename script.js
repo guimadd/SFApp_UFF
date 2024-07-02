@@ -1,4 +1,4 @@
-// Função para limpar todos os campos
+// Função para limpar todos os campos, mostrar o botão de codificação novamente e ocultar o botão de decodificação
 function resetFields() {
     document.getElementById('input').value = '';
     document.getElementById('freq_table').innerHTML = '';
@@ -7,9 +7,10 @@ function resetFields() {
     document.getElementById('graph_draw').innerHTML = '';
     document.getElementById('compression_ratio').innerHTML = '';
     document.getElementById('decodeStep_btn').style.display = 'none';
+    document.getElementById('encode_btn').style.display = 'block';
 }
 
-//Estrutura Nó
+//Estrutura Nó - árvore binaria de busca (BST)
 function Node(data, bit, left, right){ 
     this.data   = data;
     this.bit    = bit;
@@ -18,41 +19,10 @@ function Node(data, bit, left, right){
     this.show   = show;
     this.insert = insert;
 } 
+//Permite acessar e exibir o dado contido em um nó específico da árvore.
 function show() { 
     return this.data; 
 } 
-
-//Estrutura BST - árvore binaria de busca
-function BST() { 
-    this.root = null;
-}
-
-//Obter os códigos dos caracteres (que por acaso são as folhas da arvore)
-function getLeafsCodes(node, array, code="") {
-    if(node.left != null) {
-        getLeafsCodes(node.left, array, code.concat("0"));
-    }
-    if(node.right != null) {
-        getLeafsCodes(node.right, array, code.concat("1"));
-    }
-    if(node.left == null && node.right == null) {
-        array.push([node.show(), code]);
-    }
-}
-
-//Cria uma arvore
-function createTree(freq){
-    var tree = new BST();
-    var root_name = "";
-    for(var i=0;i<freq.length;i++){
-        root_name = root_name.concat(freq[i][0]);
-    }
-    var rootNode = new Node(root_name, null, null, null);
-    tree.root = rootNode;
-    tree.root.insert(freq);
-    
-    return tree;
-}
 
 //Insere elementos na arvore, tendo em conta, que deve partir os arrays +- a meio confor-me as probabilidades (ver calcSlice())
 function insert(freq){
@@ -76,6 +46,54 @@ function insert(freq){
     this.right = new Node(node_name, 1, null, null);
     if(aux.length>1)
         this.right.insert(aux);
+}
+
+//Estrutura BST - árvore binaria de busca
+function BST() { 
+    this.root = null;
+}
+
+//Calcular onde se deve dividir o array de freq's
+function calcSlice(data){
+    var total = 0;
+    for(var i=0;i<data.length;i++){
+        total+=parseFloat(data[i][1]);
+    }
+    
+    var soma = parseFloat(data[0][1]);
+    var halfTotal = total/2;
+    var j = 1;
+    for(j=1;soma+parseFloat(data[j][1])<=halfTotal;j++){
+        soma+=parseFloat(data[j][1]);
+    }
+    return j-1;
+}
+
+//Obter os códigos das folhas da árvore
+function codigosFolhas(node, array, codigo="") {
+    if(node.left != null) {
+        codigosFolhas(node.left, array, codigo.concat("0"));
+    }
+    if(node.right != null) {
+        codigosFolhas(node.right, array, codigo.concat("1"));
+    }
+    if(node.left == null && node.right == null) {
+        array.push([node.show(), codigo]);
+    }
+}
+
+//Cria uma arvore
+function criaArvore(freq){
+    var tree = new BST();
+    var root_name = "";
+    for(var i=0;i<freq.length;i++){
+        root_name = root_name.concat(freq[i][0]);
+    }
+    var rootNode = new Node(root_name, null, null, null);
+    tree.root = rootNode;
+    tree.root.insert(freq);
+    
+    return tree;
 }
 
 //Gerar tabela de freqs
@@ -196,21 +214,6 @@ function sf_pp(data){
     return sorted;
 }
 
-//Calcular onde se deve dividir o array de freq's
-function calcSlice(data){
-    var total = 0;
-    for(var i=0;i<data.length;i++){
-        total+=parseFloat(data[i][1]);
-    }
-    
-    var soma = parseFloat(data[0][1]);
-    var halfTotal = total/2;
-    var j = 1;
-    for(j=1;soma+parseFloat(data[j][1])<=halfTotal;j++){
-        soma+=parseFloat(data[j][1]);
-    }
-    return j-1;
-}
 
 //Converter array em Objeto{key=>value}
 function arrayToObject(array){
@@ -239,7 +242,7 @@ function shannon_fano(data){
     //imprime a tabela de frequencias
     document.getElementById('freq_table').appendChild(freqsTable(freq));
     //cria a arvore binaria
-    var tree = createTree(freq);
+    var tree = criaArvore(freq);
     //Imprimir a arvore
     var graph = {nodes:[],
                     edges:[]};
@@ -247,7 +250,7 @@ function shannon_fano(data){
     graphSF(graph);
     //Gera códigos
     var codes = [];
-    getLeafsCodes(tree.root, codes);
+    codigosFolhas(tree.root, codes);
     document.getElementById('codes_table').appendChild(codesTable(codes));
     //Comprime a String inicial em 0 e 1
     var bitCode = compress(data, codes);
@@ -256,6 +259,7 @@ function shannon_fano(data){
     //Decodificação
     initializeDecode(bitCode, codes);
     document.getElementById('decodeStep_btn').style.display = 'block';
+    document.getElementById('encode_btn').style.display = 'none';
 }
 function CompRatio(original, compressed){
     aux = original.length*8; // 1 char = 8 bits
