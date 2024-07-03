@@ -48,7 +48,7 @@ body {
     border-radius: 4px;
 }
 
-#decodeStep_btn, #decodeStepRev_btn {
+#decodeStep_btn, #show_tree_btn{
     display: none; /* Mantém o botão escondido inicialmente */
 }
 
