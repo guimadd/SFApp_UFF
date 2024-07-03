@@ -1,44 +1,38 @@
-# SFApp_UFF
-Trabalho da Disciplina TCC00281 - FUNDAMENTOS DE SISTEMAS MULTIMÍDIA - A1 de criação de uma aplicação web para demonstrar a codificação de Shannon-Fano
+Shannon-Fano Compression and Visualization
 
-Descrição das funções:
+Este projeto implementa o algoritmo de compressão Shannon-Fano para codificação e decodificação de dados, além de visualização da árvore de codificação usando a biblioteca Sigma.js.
+Descrição
 
-  resetFields(): Esta função limpa todos os campos e elementos HTML relacionados à exibição dos resultados da compressão e codificação. Ela também alterna a visibilidade dos botões de codificação e decodificação.
-  
-  Node(data, bit, left, right): Define um nó da árvore binária usada no algoritmo. Cada nó armazena dados, um bit (que pode ser 0 ou 1, mas é null para a raiz), referências para os nós filhos esquerdo e direito, e métodos para exibir os dados (show) e inserir novos nós (insert).
-  
-  show(): Método para retornar os dados armazenados em um nó.
-  
-  insert(freq): Método para inserir novos nós na árvore, baseado em um array de frequências. Ele divide o array em duas partes e cria nós filhos esquerdo e direito com essas partes.
-  
-  BST(): Define uma árvore binária de busca (Binary Search Tree - BST) com uma propriedade root (nó raiz) que inicialmente é null.
-  
-  calcSlice(data): Calcula onde dividir o array de frequências para a construção da árvore, tentando manter as somas das frequências dos dois lados o mais equilibradas possível.
-  
-  codigosFolhas(node, array, codigo=""): Gera os códigos binários para cada caractere baseado na posição dos nós folha na árvore.
-  
-  criaArvore(freq): Cria a árvore binária a partir de um array de frequências.
-  
-  freqsTable(tableData) e codesTable(tableData): Geram tabelas HTML para exibir as frequências dos caracteres e seus códigos binários correspondentes, respectivamente.
-  
-  buildTreeJSON(node, graph, x=0, y=0, dx=0.2, dy=0.2, path=""): Constrói uma representação em JSON da árvore para visualização.
-  
-  graphSF(g): Utiliza a biblioteca sigma para desenhar o grafo representando a árvore binária na interface do usuário.
-  
-  sf_pp(data): Pré-processa os dados de entrada, calculando a frequência de cada caractere.
-  
-  arrayToObject(array): Converte um array de pares chave-valor em um objeto.
-  
-  compress(data, codes_ary): Comprime a string de entrada em uma sequência de bits usando os códigos gerados.
-  
-  shannon_fano(data): Função principal que executa o algoritmo de Shannon-Fano. Calcula as frequências, cria a árvore, gera os códigos para cada caractere, comprime a string de entrada e atualiza a interface do usuário com os resultados.
-  
-  CompRatio(original, compressed) e CompRatio2(original, compressed): Calculam a taxa de compressão e a porcentagem de compressão, respectivamente.
+O algoritmo de Shannon-Fano é utilizado para compressão de dados baseado na frequência de ocorrência dos caracteres. Este projeto oferece uma implementação completa do algoritmo, permitindo que o usuário insira uma string de dados e visualize o processo de codificação e a estrutura da árvore de codificação passo a passo. Além disso, inclui funcionalidades de decodificação para reconstruir a string original a partir da sequência binária comprimida.
+Funcionalidades
 
+    Compressão de Dados: Converte uma string de dados em uma sequência binária comprimida usando o algoritmo Shannon-Fano.
+    Decodificação de Dados: Reconstrói a string original a partir da sequência binária comprimida utilizando a árvore de codificação gerada.
+    Visualização da Árvore de Codificação: Constrói a árvore de codificação passo a passo e a visualiza usando Sigma.js.
+    Cálculo da Taxa de Compressão: Calcula a taxa de compressão alcançada pelo algoritmo em relação aos dados originais.
 
-  
-  decodeState: Um objeto usado para manter o estado durante a decodificação.
-  
-  initDecode(bitCode, codes): Inicializa o estado de decodificação com o código comprimido e os códigos dos caracteres.
-  
-  decodeStep(): Realiza um passo da decodificação, decodificando um bit por vez e atualizando a interface do usuário com o progresso.
+Estrutura do Projeto
+
+    index.html: Página web principal que contém os elementos de interface de usuário e inclui o script.js.
+    script.js: Script JavaScript que contém a lógica de implementação do algoritmo Shannon-Fano, visualização da árvore de codificação usando Sigma.js, decodificação de dados e manipulação de eventos da interface de usuário.
+    sigma.min.js: Biblioteca Sigma.js utilizada para renderizar e manipular grafos na interface de usuário.
+    style.css: Arquivo de estilo CSS para definir o layout e o design da página web.
+
+Como Usar
+
+    Clone ou faça o download do repositório para o seu ambiente local.
+    Abra o arquivo index.html em um navegador web compatível.
+    Insira a string de dados desejada no campo de entrada e clique no botão "Codificar".
+    A tabela de frequências, a árvore de codificação e a sequência binária comprimida serão exibidas na página.
+    Para visualizar a árvore de codificação passo a passo, clique no botão "Mostrar Árvore".
+    Para decodificar a sequência binária comprimida, clique no botão "Decodificar Passo a Passo".
+
+Dependências
+
+    Sigma.js: Biblioteca JavaScript para renderização de grafos interativos.
+    Browser compatível com HTML5: Navegador web moderno compatível com HTML5 e JavaScript.
+
+Autores
+
+    Daniel Ribeiro Guimarães
+    Rafael Zuma
