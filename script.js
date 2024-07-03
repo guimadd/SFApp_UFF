@@ -7,8 +7,9 @@ function resetFields() {
     document.getElementById('graph_draw').innerHTML = '';
     document.getElementById('compression_ratio').innerHTML = '';
     document.getElementById('decodeStep_btn').style.display = 'none';
-    //document.getElementById('decodeStepRev_btn').style.display = 'none';
+    document.getElementById('show_tree_btn').style.display = 'none';
     document.getElementById('encode_btn').style.display = 'block';
+    estadoAtual.nivel = 0; // Reseta o nível da árvore
 }
 
 //Estrutura Nó - árvore binaria de busca (BST)
@@ -28,27 +29,27 @@ function show() {
 
 //Insere elementos na arvore, tendo em conta, que deve partir os arrays +- a meio confor-me as probabilidades (ver calcSlice())
 function insert(freq){
-    var aux;
-    var slice = calcSlice(freq) + 1;
+    var aux; // Array auxiliar para dividir as frequências
+    var slice = calcSlice(freq) + 1; // Calcula o ponto de divisão do array de frequências
     var node_name = "";
     var freqSum = 0; // Inicializa a soma das frequências
 
     // Inserir à esquerda
-    aux = freq.slice(0, slice);
+    aux = freq.slice(0, slice); // Pega a primeira metade do array
     for(var i = 0; i < aux.length; i++){
-        node_name = node_name.concat(aux[i][0]);
+        node_name = node_name.concat(aux[i][0]); // Concatena os caracteres
         freqSum += parseFloat(aux[i][1]); // Soma as frequências
     }
     this.left = new Node(node_name, 0, null, null, freqSum); // Passa freqSum para o novo nó
 
-    if(aux.length > 1)
-        this.left.insert(aux);
+    if(aux.length > 1) // Se houver mais de um elemento no array
+        this.left.insert(aux); // Chama recursivamente a função insert para o nó esquerdo
 
     var node_name = "";
     var freqSum = 0; // Reinicia a soma das frequências para o nó direito
 
     // Inserir à direita
-    aux = freq.slice(slice, freq.length);
+    aux = freq.slice(slice, freq.length); // Pega a segunda metade do array
     for(var i = 0; i < aux.length; i++){
         node_name = node_name.concat(aux[i][0]);
         freqSum += parseFloat(aux[i][1]); // Soma as frequências
@@ -56,7 +57,7 @@ function insert(freq){
     this.right = new Node(node_name, 1, null, null, freqSum.toFixed(3)); // Passa freqSum para o novo nó
 
     if(aux.length > 1)
-        this.right.insert(aux);
+        this.right.insert(aux); // Chama recursivamente a função insert para o nó direito
 }
 
 //Estrutura BST - árvore binaria de busca
@@ -158,34 +159,68 @@ function codesTable(tableData){
 }
 
 //Criar uma arvore em JSON
-function buildTreeJSON(node, graph, x = 0, y = 0, dx = 0.2, dy = 0.2, path = ""){
+let estadoAtual = {
+    nivel: 0 // Nível atual que está sendo exibido
+};
+
+function buildTreeJSON(node, graph, nivel = 0, nivelAtual = 0, x = 0, y = 0, dx = 0.2, dy = 0.2, path = "") {
+    if (nivelAtual > nivel) return; // Não constrói além do nível atual
+
     graph.nodes.push({
         id: node.show() + " (" + path + ")",
-        label: node.show() + " (" + path + "), Freq: " + node.freqSum, // Inclui a frequência somada no rótulo
+        label: node.show() + " (" + path + "), Freq: " + node.freqSum,
         x: x,
         y: y,
         size: 3
     });
-    if(node.left != null) {
-        var leftx = (x + (dx * -1)) - 5;
-        var lefty = (y + dy) + 5;
-        buildTreeJSON(node.left, graph, leftx, lefty, dx - 1, dy - 1, path + "0");
-        graph.edges.push({
-            id: "el_" + node.show(),
-            source: node.show() + " (" + path + ")",
-            target: node.left.show() + " (" + path + "0)"
-        });
+
+    if (node.left != null) {
+        var leftx = x - 5 - dx;
+        var lefty = y + 5 + dy;
+        buildTreeJSON(node.left, graph, nivel, nivelAtual + 1, leftx, lefty, dx - 1, dy - 1, path + "0");
+        if (nivelAtual < nivel) {
+            graph.edges.push({
+                id: "el_" + node.show(),
+                source: node.show() + " (" + path + ")",
+                target: node.left.show() + " (" + path + "0)"
+            });
+        }
     }
-    if(node.right != null) {
-        var rightx = (x + dx) + 5;
-        var righty = (y + dy) + 5;
-        buildTreeJSON(node.right, graph, rightx, righty, dx - 1, dy - 1, path + "1");
-        graph.edges.push({
-            id: "er_" + node.show(),
-            source: node.show() + " (" + path + ")",
-            target: node.right.show() + " (" + path + "1)"
-        });
+    if (node.right != null) {
+        var rightx = x + 5 + dx;
+        var righty = y + 5 + dy;
+        buildTreeJSON(node.right, graph, nivel, nivelAtual + 1, rightx, righty, dx - 1, dy - 1, path + "1");
+        if (nivelAtual < nivel) {
+            graph.edges.push({
+                id: "er_" + node.show(),
+                source: node.show() + " (" + path + ")",
+                target: node.right.show() + " (" + path + "1)"
+            });
+        }
     }
+}
+
+// Função auxiliar para calcular a altura máxima da árvore
+function calculaNivelMax(node, nivelAtual = 0) {
+    if (node == null) return nivelAtual - 1;
+    let alturaEsq = calculaNivelMax(node.left, nivelAtual + 1);
+    let alturaDir = calculaNivelMax(node.right, nivelAtual + 1);
+    return Math.max(alturaEsq, alturaDir);
+}
+
+function showTree(data) {
+    if (estadoAtual.nivel > calculaNivelMax(criaArvore(sf_pp(data)).root)) {
+        alert("A árvore já está completa."); 
+        return;
+    }
+
+    document.getElementById('graph_draw').innerHTML = '';
+    var freq = sf_pp(data); // Calcula as frequências
+    var tree = criaArvore(freq); // Cria a árvore
+    var graph = { nodes: [], edges: [] }; // Inicializa o grafo
+    buildTreeJSON(tree.root, graph, estadoAtual.nivel); // Constrói o JSON do grafo
+    graphSF(graph); // Atualiza o gráfico com o novo estado
+    estadoAtual.nivel++; // Prepara para o próximo nível na próxima chamada
 }
 
 //Gerar o grafo
@@ -228,8 +263,7 @@ function sf_pp(data){
     return sorted;
 }
 
-
-//Converter array em Objeto{key=>value}
+//Converte um array em um objeto fazendo com que o primeiro elemento do array seja a chave e o segundo o valor
 function arrayToObject(array){
     var Obj = {};
     for(var i=0;i<array.length;i++){
@@ -248,21 +282,12 @@ function compress(data, codes_ary){
     return bit_code;
 }
 
-
-
 //Shannon Fano
 function shannon_fano(data){
-    var freq = sf_pp(data);
-    //imprime a tabela de frequencias
+    var freq = sf_pp(data); //calcula as frequencias
     document.getElementById('freq_table').appendChild(freqsTable(freq));
-    //cria a arvore binaria
-    var tree = criaArvore(freq);
-    //Imprimir a arvore
-    var graph = {nodes:[],
-                    edges:[]};
-    buildTreeJSON(tree.root, graph);
-    graphSF(graph);
-    //Gera códigos
+    var tree = criaArvore(freq); //cria a arvore binaria
+    //Gera os códigos
     var codes = [];
     codigosFolhas(tree.root, codes);
     document.getElementById('codes_table').appendChild(codesTable(codes));
@@ -272,9 +297,11 @@ function shannon_fano(data){
     document.getElementById('compression_ratio').innerHTML += "Compressão: " + CompRatio(data, bitCode) + '<br>' + 'Percentual de compressão: ' + CompRatio2(data, bitCode) + '%' + '<br>' + 'Quantidade de bits com SF ' + bitCode.length + '<br>' + 'Quantidade de bits sem SF:' + data.length*8;
     //Decodificação
     initDecode(bitCode, codes);
+    document.getElementById('show_tree_btn').style.display = 'block';
     document.getElementById('decodeStep_btn').style.display = 'block';
     document.getElementById('encode_btn').style.display = 'none';
 }
+
 function CompRatio(original, compressed){
     aux = original.length*8; // 1 char = 8 bits
     return (aux/compressed.length).toFixed(2);
@@ -309,30 +336,23 @@ function decodeStep() {
         decodeState.tempCode += decodeState.bitCode[decodeState.currentIndex]; // Adiciona o bit atual ao tempCode
         if (decodeState.tempCode in decodeState.codesObj) { // Verifica se tempCode corresponde a algum código
             decodeState.decodedString += decodeState.codesObj[decodeState.tempCode]; // Anexa o caractere correspondente a decodedString
+            decodeState.lastMatch = decodeState.tempCode; // Atualiza o último match
             decodeState.tempCode = ""; // Reseta tempCode para o próximo caractere
         }
         decodeState.currentIndex++;
-        document.getElementById('input').value = decodeState.decodedString; // Atualiza o campo de entrada com o decodedString
-        updateUI();// Atualiza a interface do usuário aqui
+        updateUI();
     } else {
-        console.log("Decodificação completa."); // Mensagem de log para indicar que a decodificação foi concluída - apenas pra testar rsrs
-        document.getElementById('bit_code').innerHTML = (`Código: ${decodeState.bitCode}<br>Decodificado: ${decodeState.decodedString}<br>Bits restantes: Acabou!`);
+        document.getElementById('bit_code').innerHTML = (`Código: ${decodeState.bitCode}<br>
+            Decodificado: ${decodeState.decodedString}`);
+        alert("Decodificação completa."); 
     }
-    // Atualiza a interface do usuário aqui
 }
 
-/*function decodeStepRev(){
-    if (decodeState.currentIndex > 0) {
-        decodeState.tempCode = decodeState.bitCode.substring(0, decodeState.currentIndex);
-        decodeState.decodedString = decodeState.decodedString.substring(0, decodeState.decodedString.length - 1);
-        decodeState.currentIndex--;
-        document.getElementById('input').value = decodeState.decodedString;
-    }
-    updateUI();
-
-}*/
-
+//função para atualizar a interface
 function updateUI() {
-    document.getElementById('bit_code').innerHTML = (`Código: ${decodeState.bitCode}<br>Decodificado: ${decodeState.decodedString}<br>Bits restantes: ${decodeState.bitCode.substring(decodeState.currentIndex)}`);
-    //document.getElementById('decodeStepRev_btn').style.display = 'block';
+    document.getElementById('bit_code').innerHTML = (`Código: ${decodeState.bitCode}<br>
+        Decodificado: ${decodeState.decodedString}<br>
+        Bits restantes: ${decodeState.bitCode.substring(decodeState.currentIndex)}<br>
+        Janela: ${decodeState.tempCode}<br>
+        Último match: ${decodeState.lastMatch}`); // 
 }
