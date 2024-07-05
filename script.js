@@ -353,6 +353,6 @@ function updateUI() {
     document.getElementById('bit_code').innerHTML = (`Código: ${decodeState.bitCode}<br>
         Decodificado: ${decodeState.decodedString}<br>
         Bits restantes: ${decodeState.bitCode.substring(decodeState.currentIndex)}<br>
-        Janela: ${decodeState.tempCode}<br>
+        Código Temporário: ${decodeState.tempCode}<br>
         Último match: ${decodeState.lastMatch}`); // 
 }
